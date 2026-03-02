@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dual Language Scaffold Builder</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #4b5563;
+      --border: #dbe2ea;
+      --accent: #1d4ed8;
+      --accent-dark: #1e40af;
+      --chip: #eef2ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #eef3fa 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+      padding: 1.25rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      letter-spacing: 0.01em;
+    }
+
+    p.subtitle {
+      margin: 0.5rem 0 0;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.9rem;
+      align-items: end;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 0.35rem;
+      color: #111827;
+    }
+
+    select,
+    button {
+      width: 100%;
+      border-radius: 8px;
+      padding: 0.65rem 0.7rem;
+      font-size: 0.95rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+    }
+
+    button {
+      border-color: transparent;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      margin-top: 0.2rem;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    .output {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .output[hidden] {
+      display: none;
+    }
+
+    .section-title {
+      margin: 0 0 0.5rem;
+      font-size: 1.05rem;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .vocab-list li {
+      margin-bottom: 0.45rem;
+      background: #fbfdff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.6rem;
+      list-style-position: inside;
+    }
+
+    .pill {
+      display: inline-block;
+      background: var(--chip);
+      color: #3730a3;
+      border-radius: 999px;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-right: 0.45rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .prompt-box {
+      border-left: 4px solid var(--accent);
+      background: #f8fbff;
+      padding: 0.85rem 0.95rem;
+      border-radius: 8px;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.85rem;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>Dual Language Scaffold Builder</h1>
+      <p class="subtitle">Generate a bilingual academic scaffold for college faculty in seconds.</p>
+    </section>
+
+    <section class="card">
+      <div class="controls">
+        <div>
+          <label for="courseType">Course Type</label>
+          <select id="courseType">
+            <option>Early College</option>
+            <option>Composition</option>
+            <option>General Education</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="skillFocus">Skill Focus</label>
+          <select id="skillFocus">
+            <option>Reading</option>
+            <option>Writing</option>
+            <option>Discussion</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="languageBalance">Language Balance</label>
+          <select id="languageBalance">
+            <option>Balanced</option>
+            <option>Spanish-Dominant</option>
+            <option>English-Dominant</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="level">Level</label>
+          <select id="level">
+            <option>Introductory</option>
+            <option>Transfer-Level</option>
+          </select>
+        </div>
+
+        <div>
+          <button id="generateBtn" type="button">Generate Scaffold</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="output" class="card output" hidden>
+      <div>
+        <h2 class="section-title">Bilingual Task Description</h2>
+        <div id="taskDescription" class="prompt-box"></div>
+      </div>
+
+      <div>
+        <h2 class="section-title">Academic Vocabulary (English + Spanish)</h2>
+        <ul id="vocabList" class="vocab-list"></ul>
+      </div>
+
+      <div>
+        <h2 class="section-title">Sentence Frames (English)</h2>
+        <ul id="englishFrames"></ul>
+      </div>
+
+      <div>
+        <h2 class="section-title">Sentence Frames (Spanish)</h2>
+        <ul id="spanishFrames"></ul>
+      </div>
+    </section>
+
+    <footer>No login required · Standalone webpage</footer>
+  </main>
+
+  <script>
+    const dataBySkill = {
+      Reading: {
+        taskEn: "Read the selected text and identify the author\'s central claim and two supporting ideas.",
+        taskEs: "Lee el texto seleccionado e identifica la idea central del autor y dos ideas de apoyo.",
+        vocab: [
+          ["claim", "afirmación", "the main point the author wants readers to accept"],
+          ["evidence", "evidencia", "details or examples that support an idea"],
+          ["context", "contexto", "background information that helps explain meaning"],
+          ["inference", "inferencia", "a conclusion based on clues and prior knowledge"],
+          ["summarize", "resumir", "to restate key ideas briefly"],
+          ["analyze", "analizar", "to examine parts closely to understand the whole"],
+          ["perspective", "perspectiva", "a particular way of viewing an issue"]
+        ],
+        framesEn: [
+          "The author\'s main claim is ___ because ___.",
+          "One piece of evidence that supports this claim is ___.",
+          "From this paragraph, I can infer that ___.",
+          "The text suggests ___, which connects to ___."
+        ],
+        framesEs: [
+          "La afirmación principal del autor es ___ porque ___.",
+          "Una evidencia que apoya esta idea es ___.",
+          "De este párrafo, puedo inferir que ___.",
+          "El texto sugiere ___, lo cual se conecta con ___."
+        ]
+      },
+      Writing: {
+        taskEn: "Develop a short academic response that includes a clear thesis, evidence, and explanation.",
+        taskEs: "Redacta una respuesta académica corta que incluya una tesis clara, evidencia y explicación.",
+        vocab: [
+          ["thesis", "tesis", "the central argument of a written response"],
+          ["coherence", "coherencia", "logical flow of ideas in writing"],
+          ["citation", "cita", "reference to a source used to support claims"],
+          ["counterargument", "contraargumento", "an opposing viewpoint addressed in writing"],
+          ["revise", "revisar", "to improve writing by making purposeful changes"],
+          ["synthesize", "sintetizar", "to combine ideas from multiple sources"],
+          ["academic tone", "tono académico", "formal style appropriate for college writing"]
+        ],
+        framesEn: [
+          "My thesis is ___ because ___.",
+          "A strong example that supports my claim is ___.",
+          "One possible counterargument is ___; however, ___.",
+          "This evidence is significant because ___."
+        ],
+        framesEs: [
+          "Mi tesis es ___ porque ___.",
+          "Un ejemplo sólido que apoya mi argumento es ___.",
+          "Un posible contraargumento es ___; sin embargo, ___.",
+          "Esta evidencia es importante porque ___."
+        ]
+      },
+      Discussion: {
+        taskEn: "Participate in a structured discussion by presenting a claim, asking a question, and building on a peer\'s idea.",
+        taskEs: "Participa en una discusión estructurada presentando una postura, haciendo una pregunta y ampliando la idea de un compañero.",
+        vocab: [
+          ["justify", "justificar", "to provide reasons and evidence for an idea"],
+          ["clarify", "aclarar", "to make an idea easier to understand"],
+          ["elaborate", "elaborar", "to add detail and depth to a response"],
+          ["respectful discourse", "diálogo respetuoso", "thoughtful exchange of ideas in academic settings"],
+          ["persuasive", "persuasivo", "convincing through reasoning and evidence"],
+          ["collaborate", "colaborar", "to work with others toward shared understanding"]
+        ],
+        framesEn: [
+          "I agree with ___ because ___.",
+          "I respectfully challenge this idea by saying ___.",
+          "Can you clarify what you mean by ___?",
+          "Building on your point, I would add ___."
+        ],
+        framesEs: [
+          "Estoy de acuerdo con ___ porque ___.",
+          "Respetuosamente cuestiono esta idea al decir ___.",
+          "¿Puedes aclarar qué quieres decir con ___?",
+          "Ampliando tu punto, yo añadiría ___."
+        ]
+      }
+    };
+
+    const languageLabels = {
+      Balanced: "Language Distribution: Balanced (English/Spanish)",
+      "Spanish-Dominant": "Language Distribution: Spanish-Dominant",
+      "English-Dominant": "Language Distribution: English-Dominant"
+    };
+
+    function selectRange(items, min, max) {
+      const shuffled = [...items].sort(() => Math.random() - 0.5);
+      const count = Math.min(items.length, Math.max(min, Math.floor(Math.random() * (max - min + 1)) + min));
+      return shuffled.slice(0, count);
+    }
+
+    function renderList(container, items) {
+      container.innerHTML = "";
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        container.appendChild(li);
+      });
+    }
+
+    document.getElementById("generateBtn").addEventListener("click", () => {
+      const courseType = document.getElementById("courseType").value;
+      const skillFocus = document.getElementById("skillFocus").value;
+      const languageBalance = document.getElementById("languageBalance").value;
+      const level = document.getElementById("level").value;
+
+      const skillData = dataBySkill[skillFocus];
+      const vocabSelection = selectRange(skillData.vocab, 5, 8);
+      const englishFrames = selectRange(skillData.framesEn, 3, 5);
+      const spanishFrames = selectRange(skillData.framesEs, 3, 5);
+
+      const description = `
+        <span class="pill">${courseType}</span>
+        <span class="pill">${skillFocus}</span>
+        <span class="pill">${level}</span>
+        <span class="pill">${languageLabels[languageBalance]}</span>
+        <p><strong>EN:</strong> ${skillData.taskEn} Post your response in Blackboard and interact with at least one peer by asking a meaningful academic question.</p>
+        <p><strong>ES:</strong> ${skillData.taskEs} Publica tu respuesta en Blackboard e interactúa con al menos un compañero haciendo una pregunta académica significativa.</p>
+      `;
+
+      document.getElementById("taskDescription").innerHTML = description;
+
+      const vocabList = document.getElementById("vocabList");
+      vocabList.innerHTML = "";
+      vocabSelection.forEach(([en, es, def]) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${en}</strong> / <strong>${es}</strong>: ${def}`;
+        vocabList.appendChild(li);
+      });
+
+      renderList(document.getElementById("englishFrames"), englishFrames);
+      renderList(document.getElementById("spanishFrames"), spanishFrames);
+
+      document.getElementById("output").hidden = false;
+    });
+  </script>
+</body>
+</html>
